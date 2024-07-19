@@ -1,33 +1,30 @@
-/* by：弦云孤赫——David Yang
-** github - https://github.com/yangyunhe369
-*/
-// 封装打印日志方法
+// Encapsulate printing log method
 const log = console.log.bind(console)
-// 生成图片对象方法
+// Generate image object method
 const imageFromPath = function (src) {
   let img = new Image()
   img.src = './images/' + src
   return img
 }
-// 检测页面不可见时自动暂停游戏方法
+// How to automatically pause the game when detecting that the page is invisible
 const isPageHidden = function (game) {
-  let hiddenProperty = 'hidden' in document ? 'hidden' :    
-      'webkitHidden' in document ? 'webkitHidden' :    
-      'mozHidden' in document ? 'mozHidden' :    
-      null
+  let hiddenProperty = 'hidden' in document ? 'hidden' :
+    'webkitHidden' in document ? 'webkitHidden' :
+      'mozHidden' in document ? 'mozHidden' :
+        null
   let visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange')
-  // 监听页面是否可见事件
+  // Listen for page visibility events
   document.addEventListener(visibilityChangeEvent, function () {
-    if (!document[hiddenProperty]) {  // 可见状态
+    if (!document[hiddenProperty]) {  // Visible status
       setTimeout(function () {
         game.state = game.state_RUNNING
       }, 100)
-    } else { // 不可见状态
+    } else { // invisible state
       game.state = game.state_STOP
     }
   })
 }
-// 图片素材路径
+// Picture material path
 const allImg = {
   background: 'background.jpg',
   paddle: 'paddle.png',

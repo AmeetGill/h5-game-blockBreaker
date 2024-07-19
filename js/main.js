@@ -1,49 +1,46 @@
-/* by：弦云孤赫——David Yang
-** github - https://github.com/yangyunhe369
-*/
-// 游戏主函数
+// Game main function
 let _main = {
-  LV: 1,                               // 初始关卡
-  MAXLV: 2,                            // 最终关卡
-  scene: null,                         // 场景对象
-  blockList: null,                     // 所有砖块对象集合
-  ball: null,                          // 小球对象
-  paddle: null,                        // 挡板对象
-  score: null,                         // 计分板对象
-  ball_x: 491,                         // 小球默认x轴坐标
-  ball_y: 432,                         // 小球默认y轴坐标
-  paddle_x: 449,                       // 挡板默认x轴坐标
-  paddle_y: 450,                       // 挡板默认y轴坐标
-  score_x: 10,                         // 计分板默认x轴坐标
-  score_y: 30,                         // 计分板默认y轴坐标
-  fps: 60,                             // 游戏运行帧数
-  game: null,                          // 游戏主要逻辑对象
-  start: function () {                 // 游戏启动函数
+  LV: 1, // Initial level
+  MAXLV: 3, // final level
+  scene: null, // scene object
+  blockList: null, // Collection of all brick objects
+  ball: null, // ball object
+  paddle: null, // paddle object
+  score: null, // scoreboard object
+  ball_x: 491, //The default x-axis coordinate of the ball
+  ball_y: 432, //The default y-axis coordinate of the ball
+  paddle_x: 449, // The default x-axis coordinate of the paddle
+  paddle_y: 450, // The default y-axis coordinate of the paddle
+  score_x: 10, // The default x-axis coordinate of the scoreboard
+  score_y: 30, //The default y-axis coordinate of the scoreboard
+  fps: 60, // The number of frames the game runs
+  game: null, // main logical object of the game
+  start: function () { // Game startup function
     let self = this
     /**
-     * 生成场景（根据游戏难度级别不同，生成不同关卡）
+     * Generate scenes (generate different levels according to different difficulty levels of the game)
      */
     self.scene = new Scene(self.LV)
-    // 实例化所有砖块对象集合
+    // Instantiate a collection of all brick objects
     self.blockList = self.scene.initBlockList()
     /**
-     * 小球
+     * small ball
      */
     self.ball = new Ball(self)
     /**
-     * 挡板
+     * Baffle
      */
     self.paddle = new Paddle(self)
     /**
-     * 计分板
+     * Scoreboard
      */
     self.score = new Score(self)
     /**
-     * 游戏主要逻辑
+     * Main logic of the game
      */
     self.game = new Game(self)
     /**
-     * 游戏初始化
+     * Game initialization
      */
     self.game.init(self)
   }

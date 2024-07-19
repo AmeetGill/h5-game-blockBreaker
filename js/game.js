@@ -1,216 +1,214 @@
-/* by：弦云孤赫——David Yang
-** github - https://github.com/yangyunhe369
-*/
-// 游戏主要运行逻辑
+// The main running logic of the game
 class Game {
-  constructor (main) {
+  constructor(main) {
     let g = {
-      main: main,                                                   // 游戏主函数
-      actions: {},                                                  // 记录按键动作
-      keydowns: {},                                                 // 记录按键keycode
-      state: 1,                                                     // 游戏状态值，初始默认为1
-      state_START: 1,                                               // 开始游戏
-      state_RUNNING: 2,                                             // 游戏开始运行
-      state_STOP: 3,                                                // 暂停游戏
-      state_GAMEOVER: 4,                                            // 游戏结束
-      state_UPDATE: 5,                                              // 游戏通关
-      canvas: document.getElementById("canvas"),                    // canvas元素
-      context: document.getElementById("canvas").getContext("2d"),  // canvas画布
-      timer: null,                                                  // 轮询定时器
-      fps: main.fps,                                                // 动画帧数，默认60
+      main: main, // Game main function
+      actions: {}, // record key actions
+      keydowns: {}, // record keycode
+      state: 1, // Game state value, the initial default is 1
+      state_START: 1, // Start the game
+      state_RUNNING: 2, //The game starts running
+      state_STOP: 3, // Pause the game
+      state_GAMEOVER: 4, // Game over
+      state_UPDATE: 5, // Game cleared
+      canvas: document.getElementById("canvas"), // canvas element
+      context: document.getElementById("canvas").getContext("2d"), // canvas canvas
+      timer: null, // Polling timer
+      fps: main.fps, // animation frame number, default 60
     }
     Object.assign(this, g)
   }
-  // 绘制页面所有素材
-  draw (paddle, ball, blockList, score) {
+  // Draw all materials on the page
+  draw(paddle, ball, blockList, score) {
     let g = this
-    // 清除画布
+    // clear canvas
     g.context.clearRect(0, 0, g.canvas.width, g.canvas.height)
-    // 绘制背景图
+    // draw background image
     g.drawBg()
-    // 绘制挡板
+    // draw baffle
     g.drawImage(paddle)
-    // 绘制小球
+    //Draw the ball
     g.drawImage(ball)
-    // 绘制砖块
+    // draw bricks
     g.drawBlocks(blockList)
-    // 绘制分数
+    // draw fractions
     g.drawText(score)
   }
-  // 绘制图片
-  drawImage (obj) {
+  // draw pictures
+  drawImage(obj) {
     this.context.drawImage(obj.image, obj.x, obj.y)
   }
-  // 绘制背景图
-  drawBg () {
+  // draw background image
+  drawBg() {
     let bg = imageFromPath(allImg.background)
     this.context.drawImage(bg, 0, 0)
   }
-  // 绘制所有砖块
-  drawBlocks (list) {
+  // Draw all bricks
+  drawBlocks(list) {
     for (let item of list) {
       this.drawImage(item)
     }
   }
-  // 绘制计数板
-  drawText (obj) {
+  //Draw the counting board
+  drawText(obj) {
     this.context.font = '24px Microsoft YaHei'
     this.context.fillStyle = '#fff'
-    // 绘制分数
+    // draw fractions
     this.context.fillText(obj.text + obj.allScore, obj.x, obj.y)
-    // 绘制关卡
+    // draw level
     this.context.fillText(obj.textLv + obj.lv, this.canvas.width - 100, obj.y)
   }
-  // 游戏结束
-  gameOver () {
-    // 清除定时器
+  // game over
+  gameOver() {
+    // Clear timer
     clearInterval(this.timer)
-    // 清除画布
+    // clear canvas
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    // 绘制背景图
+    // draw background image
     this.drawBg()
-    // 绘制提示文字
+    // Draw prompt text
     this.context.font = '48px Microsoft YaHei'
     this.context.fillStyle = '#fff'
-    this.context.fillText('游戏结束', 404, 226)
+    this.context.fillText('Game over', 404, 226)
   }
-  // 游戏晋级
-  goodGame () {
-    // 清除定时器
+
+  // Game promotion
+  goodGame() {
+    // Clear timer
     clearInterval(this.timer)
-    // 清除画布
+    // clear canvas
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    // 绘制背景图
+    // draw background image
     this.drawBg()
-    // 绘制提示文字
+    // Draw prompt text
     this.context.font = '48px Microsoft YaHei'
     this.context.fillStyle = '#fff'
-    this.context.fillText('恭喜晋级下一关卡', 308, 226)
+    this.context.fillText('Congratulations on advancing to the next level', 308, 226)
   }
-  // 游戏通关
-  finalGame () {
-    // 清除定时器
+  // Game cleared
+  finalGame() {
+    // Clear timer
     clearInterval(this.timer)
-    // 清除画布
+    // clear canvas
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    // 绘制背景图
+    // draw background image
     this.drawBg()
-    // 绘制提示文字
+    // Draw prompt text
     this.context.font = '48px Microsoft YaHei'
     this.context.fillStyle = '#fff'
-    this.context.fillText('恭喜通关全部关卡', 308, 226)
+    this.context.fillText('Congratulations on passing all levels', 308, 226)
   }
-  // 注册事件
-  registerAction (key, callback) {
+  // Registration issue
+  registerAction(key, callback) {
     this.actions[key] = callback
   }
-  // 小球碰撞砖块检测
-  checkBallBlock (g, paddle, ball, blockList, score) {
+  // Detection of ball collision with bricks
+  checkBallBlock(g, paddle, ball, blockList, score) {
     let p = paddle, b = ball
-    // 小球碰撞挡板检测
+    // Detection of ball collision with baffle
     if (p.collide(b)) {
-      // 当小球运动方向趋向挡板中心时，Y轴速度取反，反之则不变
-      if (Math.abs(b.y + b.h/2 - p.y + p.h/2) > Math.abs(b.y + b.h/2 + b.speedY - p.y + p.h/2)) {
+      // When the ball moves in the direction of the baffle center, the Y-axis speed is inverted, otherwise it remains unchanged.
+      if (Math.abs(b.y + b.h / 2 - p.y + p.h / 2) > Math.abs(b.y + b.h / 2 + b.speedY - p.y + p.h / 2)) {
         b.speedY *= -1
       } else {
         b.speedY *= 1
       }
-      // 设置X轴速度
+      //Set X-axis speed
       b.speedX = p.collideRange(b)
     }
-    // 小球碰撞砖块检测
+    // Detection of ball collision with bricks
     blockList.forEach(function (item, i, arr) {
-      if (item.collide(b)) { // 小球、砖块已碰撞
-        if (!item.alive) { // 砖块血量为0时，进行移除
+      if (item.collide(b)) { // The ball and brick have collided
+        if (!item.alive) { // When the health of the brick is 0, remove it
           arr.splice(i, 1)
         }
-        // 当小球运动方向趋向砖块中心时，速度取反，反之则不变
+        // When the direction of movement of the ball is towards the center of the brick, the speed is inverted, otherwise it remains unchanged.
         if ((b.y < item.y && b.speedY < 0) || (b.y > item.y && b.speedY > 0)) {
           if (!item.collideBlockHorn(b)) {
             b.speedY *= -1
-          } else { // 当小球撞击砖块四角时，Y轴速度不变
+          } else { // When the ball hits the four corners of the brick, the Y-axis speed remains unchanged
             b.speedY *= 1
           }
         } else {
           b.speedY *= 1
         }
-        // 当小球撞击砖块四角时，X轴速度取反
+        // When the ball hits the four corners of the brick, the X-axis velocity is inverted
         if (item.collideBlockHorn(b)) {
           b.speedX *= -1
         }
-        // 计算分数
+        // Calculate the score
         score.computeScore()
       }
     })
-    // 挡板移动时边界检测
-    if (p.x <= 0) { // 到左边界时
+    // Boundary detection when the baffle moves
+    if (p.x <= 0) { // When reaching the left boundary
       p.isLeftMove = false
     } else {
       p.isLeftMove = true
     }
-    if (p.x >= 1000 - p.w) { // 到右边界时
+    if (p.x >= 1000 - p.w) { // When reaching the right boundary
       p.isRightMove = false
     } else {
       p.isRightMove = true
     }
-    // 移动小球
+    //Move the ball
     b.move(g)
   }
-  // 设置逐帧动画
-  setTimer (paddle, ball, blockList, score) {
+  //Set frame-by-frame animation
+  setTimer(paddle, ball, blockList, score) {
     let g = this
     let main = g.main
     g.timer = setInterval(function () {
-      // actions集合
+      // actions collection
       let actions = Object.keys(g.actions)
       for (let i = 0; i < actions.length; i++) {
         let key = actions[i]
-        if(g.keydowns[key]) {
-          // 如果按键被按下，调用注册的action
+        if (g.keydowns[key]) {
+          //If the button is pressed, call the registered action
           g.actions[key]()
         }
       }
-      // 当砖块数量为0时，挑战成功
+      // When the number of bricks is 0, the challenge is successful
       if (blockList.length == 0) {
-        if (main.LV === main.MAXLV) { // 最后一关通关
-          // 升级通关
+        if (main.LV === main.MAXLV) { // The last level is cleared
+          // Upgrade and pass
           g.state = g.state_UPDATE
-          // 挑战成功，渲染通关场景
+          // Challenge successful, render the clearance scene
           g.finalGame()
-        } else { // 其余关卡通关
-          // 升级通关
+        } else { //Remaining levels
+          // Upgrade and pass
           g.state = g.state_UPDATE
-          // 挑战成功，渲染下一关卡场景
+          // Challenge successful, render the next level scene
           g.goodGame()
         }
       }
-      // 判断游戏是否结束
+      // Determine whether the game is over
       if (g.state === g.state_GAMEOVER) {
         g.gameOver()
       }
-      // 判断游戏开始时执行事件
+      // Determine the execution event when the game starts
       if (g.state === g.state_RUNNING) {
         g.checkBallBlock(g, paddle, ball, blockList, score)
-        // 绘制游戏所有素材
+        // Draw all game materials
         g.draw(paddle, ball, blockList, score)
-      } else if (g.state === g.state_START){
-        // 绘制游戏所有素材
+      } else if (g.state === g.state_START) {
+        // Draw all game materials
         g.draw(paddle, ball, blockList, score)
       }
-    }, 1000/g.fps)
+    }, 1000 / g.fps)
   }
   /**
-   * 初始化函数
+   * Initialization function
    */
-  init () {
+  init() {
     let g = this,
-        paddle = g.main.paddle,
-        ball = g.main.ball,
-        blockList = g.main.blockList,
-        score = g.main.score
-    // 设置键盘按下及松开相关注册函数
+      paddle = g.main.paddle,
+      ball = g.main.ball,
+      blockList = g.main.blockList,
+      score = g.main.score
+    //Set related registration functions for keyboard press and release
     window.addEventListener('keydown', function (event) {
-     g.keydowns[event.keyCode] = true
+      g.keydowns[event.keyCode] = true
     })
     window.addEventListener('keyup', function (event) {
       g.keydowns[event.keyCode] = false
@@ -218,52 +216,52 @@ class Game {
     g.registerAction = function (key, callback) {
       g.actions[key] = callback
     }
-    // 注册左方向键移动事件
-    g.registerAction('37', function(){
-      // 判断游戏是否处于运行阶段
+    //Register left arrow key movement event
+    g.registerAction('37', function () {
+      // Determine whether the game is in the running stage
       if (g.state === g.state_RUNNING && paddle.isLeftMove) {
         paddle.moveLeft()
       }
     })
-    // 注册右方向键移动事件
-    g.registerAction('39', function(){
-      // 判断游戏是否处于运行阶段
+    //Register the right arrow key movement event
+    g.registerAction('39', function () {
+      // Determine whether the game is in the running stage
       if (g.state === g.state_RUNNING && paddle.isRightMove) {
         paddle.moveRight()
       }
     })
     window.addEventListener('keydown', function (event) {
       switch (event.keyCode) {
-        // 注册空格键发射事件
-        case 32 :
-          if (g.state === g.state_GAMEOVER) { // 游戏结束时
-            // 开始游戏
+        //Register space bar emission event
+        case 32:
+          if (g.state === g.state_GAMEOVER) { // When the game ends
+            // Start game
             g.state = g.state_START
-            // 初始化
+            // initialization
             g.main.start()
-          } else { 
-            // 开始游戏
+          } else {
+            // Start game
             ball.fired = true
             g.state = g.state_RUNNING
           }
           break
-        // N 键进入下一关卡
-        case 78 :
-          // 游戏状态为通关，且不为最终关卡时
-          if (g.state === g.state_UPDATE && g.main.LV !== g.main.MAXLV) { // 进入下一关
-            // 开始游戏
+        // N key to enter the next level
+        case 78:
+          // When the game status is clearance and not the final level
+          if (g.state === g.state_UPDATE && g.main.LV !== g.main.MAXLV) { // Enter the next level
+            // Start game
             g.state = g.state_START
-            // 初始化下一关卡
+            //Initialize the next level
             g.main.start(++g.main.LV)
           }
           break
-        // P 键暂停游戏事件
-        case 80 :
+        // P key pauses game event
+        case 80:
           g.state = g.state_STOP
           break
       }
     })
-    // 设置轮询定时器
+    //Set polling timer
     g.setTimer(paddle, ball, blockList, score)
   }
 }
