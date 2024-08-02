@@ -35,16 +35,16 @@ git clone https://github.com/yangyunhe369/h5-game-blockBreaker.git
 ├─ css                          // css样式资源文件
 ├─ images                       // 图片资源文件  
 └─ js
-   ├─ common.js                 // 公共方法
-   ├─ scene.js                  // 游戏场景相关类
-   ├─ game.js                   // 游戏主要运行逻辑
-   └─ main.js                   // 游戏运行主函数
+   ├─ common.ts                 // 公共方法
+   ├─ paddle.ts                  // 游戏场景相关类
+   ├─ game.ts                   // 游戏主要运行逻辑
+   └─ main.ts                   // 游戏运行主函数
 ```
 
-* common.js => 引入公共方法
-* scene.js => 引入游戏场景素材相关类，包括砖块、小球、挡板、生成的砖块对象集合、计分板
-* game.js => 引入游戏引擎
-* main.js => 游戏运行主函数
+* common.ts => 引入公共方法
+* paddle.ts => 引入游戏场景素材相关类，包括砖块、小球、挡板、生成的砖块对象集合、计分板
+* game.ts => 引入游戏引擎
+* main.ts => 游戏运行主函数
 
 ## 项目更新
 

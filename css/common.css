@@ -44,7 +44,7 @@ a:hover{text-decoration:none;}
 /*------------------------------ Fill end ------------------- --------*/
 
 /*------------------------------ icon start ------------------- --------*/
-.icon{background:url(../images/icon.png) no-repeat;}
+/*.icon{background:url(../images/icon.png) no-repeat;}*/
 /*------------------------------ icon end ------------------- --------*/
 /*------------------------------ Code display box start ------------------ ----------*/
 h1{width: 960px;margin:0 auto 20px;padding-top:20px;font-size: 18px;line-height: 25px;font-weight: normal;}
